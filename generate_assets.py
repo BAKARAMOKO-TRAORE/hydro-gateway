@@ -86,30 +86,33 @@ def make_icon(path, transparent_bg=False):
     bg = TRANSP if transparent_bg else NAVY
     img = Image.new("RGBA", (W, H), bg)
 
-    cx, cy = W // 2, H // 2
+    cx = W // 2   # 512
 
-    # Anneau or subtil en fond
-    img = draw_ring(img, cx, cy, 450, (*GOLD[:3], 60), width=3)
+    # ── Anneau or subtil (ne déborde pas) ──
+    img = draw_ring(img, cx, cx, 430, (*GOLD[:3], 55), width=3)
 
-    # Goutte (bleue)
-    drop_r  = 240
-    drop_cy = cy + 80
+    # ── Goutte bleue : cercle bas centré à y=500, r=200 ──
+    # Tip de la goutte : y = 500 - 200 - 100 = 200  (marge haut = 200px)
+    # Bas de la goutte : y = 500 + 200 = 700
+    drop_r  = 200
+    drop_cy = 500
     img = draw_drop(img, cx, drop_cy, drop_r, (*BLUE[:3], 235))
 
-    # Reflet gauche dans la goutte (blanc doux)
+    # ── Reflet discret (haut-gauche de la goutte) ──
     def reflet(d):
-        d.ellipse([cx - drop_r//2, drop_cy - drop_r//2 - 20,
-                   cx - drop_r//6, drop_cy - drop_r//6 - 20],
-                  fill=(*WHITE[:3], 55))
+        d.ellipse([cx - 90, drop_cy - 150, cx - 30, drop_cy - 90],
+                  fill=(*WHITE[:3], 50))
     img = alpha_draw(img, reflet)
 
-    # Arcs WiFi BLANCS a l'interieur du haut de la goutte
-    wifi_cy = drop_cy - drop_r + 60   # haut de la goutte
-    img = draw_wifi(img, cx, wifi_cy, 110, (*WHITE[:3], 210), lw=13)
+    # ── Arcs WiFi blancs dans la partie haute de la goutte ──
+    # Centré à y = 500 - 200 + 80 = 380  (bien à l'intérieur)
+    wifi_cy = drop_cy - drop_r + 80   # 380
+    img = draw_wifi(img, cx, wifi_cy, 95, (*WHITE[:3], 215), lw=12)
 
-    # Texte "HG" or en bas
-    fnt_hg = font(150, bold=True)
-    text_y = drop_cy + drop_r + 24
+    # ── Texte "HG" en or : baseline y=740 ──
+    # Bas du texte ≈ 740+130=870  →  marge basse = 154px
+    fnt_hg = font(130, bold=True)
+    text_y = drop_cy + drop_r + 40   # 740
     img = centered_text(img, "HG", text_y, fnt_hg, GOLD)
 
     img.save(path, "PNG")
