@@ -17,6 +17,7 @@
         "backgroundColor": "#0A2342"
       },
       "package": "ci.hydroscope.hydrogateway",
+      "targetSdkVersion": 33,
       "permissions": [
         "android.permission.RECEIVE_SMS",
         "android.permission.READ_SMS",

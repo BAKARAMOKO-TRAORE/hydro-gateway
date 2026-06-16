@@ -23,14 +23,20 @@ Notifications.setNotificationHandler({
 async function requestSmsPermissions(): Promise<boolean> {
   if (Platform.OS !== 'android') return false;
   try {
-    const result = await PermissionsAndroid.requestMultiple([
+    const receive = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.RECEIVE_SMS,
-      PermissionsAndroid.PERMISSIONS.READ_SMS,
-    ]);
-    return (
-      result[PermissionsAndroid.PERMISSIONS.RECEIVE_SMS] === PermissionsAndroid.RESULTS.GRANTED &&
-      result[PermissionsAndroid.PERMISSIONS.READ_SMS] === PermissionsAndroid.RESULTS.GRANTED
+      {
+        title: 'Permission SMS',
+        message: "HydroGateway a besoin d'accéder aux SMS pour détecter les paiements Mobile Money.",
+        buttonPositive: 'Autoriser',
+        buttonNegative: 'Refuser',
+      }
     );
+    if (receive !== PermissionsAndroid.RESULTS.GRANTED) return false;
+    const read = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_SMS,
+    );
+    return read === PermissionsAndroid.RESULTS.GRANTED;
   } catch {
     return false;
   }
