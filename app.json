@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "HydroGateway",
+    "slug": "hydro-gateway",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A2342"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A2342"
+      },
+      "package": "ci.hydroscope.hydrogateway",
+      "permissions": [
+        "android.permission.RECEIVE_SMS",
+        "android.permission.READ_SMS",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#0A2342",
+          "sounds": []
+        }
+      ],
+      [
+        "expo-secure-store"
+      ]
+    ],
+    "extra": {
+      "webhookUrl": "https://admin.hydroscope.ci/api/webhook/sms"
+    }
+  }
+}
