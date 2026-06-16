@@ -11,7 +11,12 @@ export async function saveWebhookSecret(secret: string): Promise<void> {
   await SecureStore.setItemAsync(SECRET_STORE_KEY, secret.trim());
 }
 
-export async function sendToWebhook(body: string, expediteur: string): Promise<void> {
+export async function sendToWebhook(
+  body: string,
+  expediteur: string,
+  transaction_id?: string | null,
+  operateur?: string | null,
+): Promise<void> {
   const secret = await getWebhookSecret();
   if (!secret) throw new Error('Secret webhook non configuré — allez dans Paramètres');
 
@@ -21,7 +26,12 @@ export async function sendToWebhook(body: string, expediteur: string): Promise<v
       'Content-Type': 'application/json',
       'x-webhook-secret': secret,
     },
-    body: JSON.stringify({ body, expediteur }),
+    body: JSON.stringify({
+      body,
+      expediteur,
+      transaction_id: transaction_id ?? null,
+      operateur: operateur ?? null,
+    }),
   });
 
   if (!response.ok) {

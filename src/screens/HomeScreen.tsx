@@ -8,7 +8,7 @@ import NetInfo from '@react-native-community/netinfo';
 import * as Notifications from 'expo-notifications';
 import { SmsMessage } from '../types';
 import SmsCard from '../components/SmsCard';
-import { buildSmsPayload, isMobileMoneyCI } from '../services/smsService';
+import { extractSmsData, isMobileMoneyCI } from '../services/smsService';
 import { sendToWebhook } from '../services/webhookService';
 import { enqueue, flushQueue, loadQueue } from '../services/queueService';
 
@@ -74,7 +74,7 @@ export default function HomeScreen() {
     const subscription = SmsListener.addListener(async ({ body, originatingAddress }) => {
       if (!isMobileMoneyCI(body)) return;
 
-      const sms = buildSmsPayload(body, originatingAddress);
+      const sms = extractSmsData(body, originatingAddress);
       setSmsList(prev => [sms, ...prev].slice(0, 10));
       setStatus(`📩 SMS ${sms.operateur} intercepté`);
 
@@ -89,7 +89,7 @@ export default function HomeScreen() {
       setSending(true);
       try {
         if (online) {
-          await sendToWebhook(body, originatingAddress);
+          await sendToWebhook(body, sms.expediteur, sms.transaction_id, sms.operateur);
           setStatus(`✅ Envoyé — ${sms.operateur}`);
         } else {
           await enqueue(sms);

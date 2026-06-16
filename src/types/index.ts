@@ -5,6 +5,8 @@ export interface SmsMessage {
   expediteur: string;
   timestamp: number;
   operateur: Operateur | null;
+  montant?: number | null;
+  transaction_id?: string | null;
 }
 
 export interface QueuedWebhook {

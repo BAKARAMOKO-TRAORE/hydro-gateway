@@ -33,7 +33,7 @@ export async function flushQueue(): Promise<{ sent: number; failed: number }> {
   for (const item of queue) {
     if (item.retries >= MAX_RETRIES) continue;
     try {
-      await sendToWebhook(item.sms.body, item.sms.expediteur);
+      await sendToWebhook(item.sms.body, item.sms.expediteur, item.sms.transaction_id, item.sms.operateur);
       sent++;
     } catch {
       remaining.push({ ...item, retries: item.retries + 1 });
