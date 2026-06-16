@@ -38,7 +38,11 @@
       ]
     ],
     "extra": {
-      "webhookUrl": "https://admin.hydroscope.ci/api/webhook/sms"
-    }
+      "webhookUrl": "https://admin.hydroscope.ci/api/webhook/sms",
+      "eas": {
+        "projectId": "4e5e5873-0dcc-49ce-bbc4-6d19ba11350f"
+      }
+    },
+    "owner": "bakaramoko-traores-organization"
   }
 }
