@@ -3,7 +3,7 @@ import {
   View, Text, FlatList, StyleSheet, TouchableOpacity,
   Alert, ActivityIndicator, PermissionsAndroid, Platform,
 } from 'react-native';
-import SmsListener from 'react-native-sms-listener';
+import SmsListener from '../native/SmsListener';
 import NetInfo from '@react-native-community/netinfo';
 import * as Notifications from 'expo-notifications';
 import { SmsMessage } from '../types';
