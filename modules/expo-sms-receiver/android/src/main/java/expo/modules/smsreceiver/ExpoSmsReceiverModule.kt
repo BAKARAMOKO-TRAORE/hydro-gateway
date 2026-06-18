@@ -19,8 +19,8 @@ class ExpoSmsReceiverModule : Module() {
     Events("onSmsReceived")
 
     Function("startListening") {
-      val context = appContext.reactContext ?: return@Function
-      if (receiver != null) return@Function
+      val context = appContext.reactContext ?: return@Function null
+      if (receiver != null) return@Function null
 
       val filter = IntentFilter("android.provider.Telephony.SMS_RECEIVED").apply {
         priority = 999
@@ -50,7 +50,7 @@ class ExpoSmsReceiverModule : Module() {
     }
 
     Function("stopListening") {
-      val context = appContext.reactContext ?: return@Function
+      val context = appContext.reactContext ?: return@Function null
       receiver?.let {
         try { context.unregisterReceiver(it) } catch (e: Exception) {}
       }
