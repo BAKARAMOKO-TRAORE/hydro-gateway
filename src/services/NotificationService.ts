@@ -6,21 +6,31 @@ export interface ParsedWaveNotification {
   body: string;
 }
 
+const WAVE_ID_RE    = /T_[A-Z0-9]+/;
+const WAVE_DETECT_RE = /ID\s+de\s+transaction/i;
+const MONTANT_RE    = /(\d[\d.]*)\s*F(?:CFA)?/i;
+const EXP_RE        = /(?:Client\s*:\s*|Vendu\s+[aà]\s+)([\d\s]+)/i;
+const TRANS_ID_RE   = /(T_[A-Z0-9]+)/;
+
 export function parseWaveNotification(
   title: string,
   messageBody: string,
 ): ParsedWaveNotification | null {
   const fullText = `${title}\n${messageBody}`;
-  if (!/(T_[A-Z0-9]+)/.test(fullText)) return null;
 
-  const montantMatch = fullText.match(/(\d[\d.]+)\s*F(?:CFA)?/i);
-  const montantStr = montantMatch?.[1]?.replace(/\./g, '') ?? null;
-  const montant = montantStr ? parseInt(montantStr, 10) : null;
+  // Nécessite "ID de transaction" ET identifiant T_XXXX — les deux obligatoires
+  if (WAVE_ID_RE.exec(fullText) === null || WAVE_DETECT_RE.exec(fullText) === null) return null;
 
-  const expMatch = fullText.match(/Client\s*:\s*([\d\s]+)/i);
-  const expediteur = expMatch?.[1]?.replace(/\s/g, '') ?? null;
+  // Montant ex: "50.500F" — le point est séparateur de milliers (Wave CI)
+  const montantMatch = MONTANT_RE.exec(fullText);
+  const montantStr = montantMatch?.[1]?.replaceAll('.', '') ?? null;
+  const montant = montantStr ? Number.parseInt(montantStr, 10) : null;
 
-  const idMatch = fullText.match(/(T_[A-Z0-9]+)/);
+  // Numéro expéditeur : "Client : 0789..." ou "Vendu à 0789..."
+  const expMatch = EXP_RE.exec(fullText);
+  const expediteur = expMatch?.[1]?.replaceAll(' ', '') ?? null;
+
+  const idMatch = TRANS_ID_RE.exec(fullText);
   const transaction_id = idMatch?.[1] ?? null;
 
   return { operateur: 'Wave', montant, expediteur, transaction_id, body: fullText };
