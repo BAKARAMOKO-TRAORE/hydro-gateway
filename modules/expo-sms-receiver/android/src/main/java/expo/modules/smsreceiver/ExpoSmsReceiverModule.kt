@@ -30,9 +30,8 @@ class ExpoSmsReceiverModule : Module() {
         override fun onReceive(ctx: Context, intent: Intent) {
           val bundle = intent.extras ?: return
           val pdus = bundle.get("pdus") as? Array<*> ?: return
-          val format = bundle.getString("format")
+          val format = bundle.getString("format") ?: "3gpp"
 
-          // Reconstituer le message complet (SMS longs = plusieurs PDU)
           val messages = pdus.mapNotNull { pdu ->
             SmsMessage.createFromPdu(pdu as ByteArray, format)
           }
@@ -53,7 +52,7 @@ class ExpoSmsReceiverModule : Module() {
     Function("stopListening") {
       val context = appContext.reactContext ?: return@Function
       receiver?.let {
-        try { context.unregisterReceiver(it) } catch (_: Exception) {}
+        try { context.unregisterReceiver(it) } catch (e: Exception) {}
       }
       receiver = null
     }
