@@ -8,4 +8,7 @@ version = '1.0.0'
 
 android {
   namespace 'expo.modules.smsreceiver'
+  defaultConfig {
+    versionName '1.0.0'
+  }
 }
