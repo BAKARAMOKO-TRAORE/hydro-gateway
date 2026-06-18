@@ -1,0 +1,10 @@
+{
+  "name": "expo-sms-receiver",
+  "version": "1.0.0",
+  "description": "Native Expo module — réception SMS Android pour HydroGateway",
+  "main": "index.ts",
+  "source": "index.ts",
+  "peerDependencies": {
+    "expo": "*"
+  }
+}

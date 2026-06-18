@@ -1,4 +1,10 @@
-import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
+import { Platform } from 'react-native';
+import {
+  startListening,
+  stopListening,
+  addSmsListener,
+  SmsReceivedEvent,
+} from 'expo-sms-receiver';
 
 export interface IncomingSms {
   body: string;
@@ -9,21 +15,27 @@ export interface SmsSubscription {
   remove(): void;
 }
 
-// NativeModules.RNSmsListener est fourni par le module natif Android.
-// Sur simulateur ou si non installé, on renvoie un stub no-op.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const nativeModule = NativeModules.RNSmsListener as any;
-const emitter: NativeEventEmitter | null = nativeModule
-  ? new NativeEventEmitter(nativeModule)
-  : null;
-
 const SmsListener = {
   addListener(callback: (message: IncomingSms) => void): SmsSubscription {
-    if (Platform.OS !== 'android' || !emitter) {
+    if (Platform.OS !== 'android') {
       return { remove: () => {} };
     }
-    const sub = emitter.addListener('onSMSReceived', callback);
-    return { remove: () => sub.remove() };
+
+    startListening();
+
+    const sub = addSmsListener((event: SmsReceivedEvent) => {
+      callback({
+        body: event.body,
+        originatingAddress: event.originatingAddress,
+      });
+    });
+
+    return {
+      remove: () => {
+        sub.remove();
+        stopListening();
+      },
+    };
   },
 };
 
